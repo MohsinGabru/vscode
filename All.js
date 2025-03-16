@@ -1,11 +1,11 @@
 const script = {};
 
-fetch('scripts.json')
+fetch('https://ruineasyweb.netlify.app/Scripts/scripts.json')
 	.then(response => response.json())
 	.then(scripts => {
 		scripts.forEach(({ host, file }) => {
-			script[host] = file.replace('.js', '');
-		});
+			script[host] = file.replace('.js', '')
+		})
 	})
 	.catch(error => console.error('Error loading scripts.json:', error));
 
@@ -71,6 +71,11 @@ if (script[window.location.host]) {
             text-align: center;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
+		#model h1 {
+			margin: 0;
+			margin-bottom: 10px;
+    		text-decoration: underline;
+		}
         #option-table {
             width: 100%;
             border-collapse: collapse;

@@ -14,27 +14,42 @@
 
 // }
 
-let lastDebit, lastCredit, updateScheduled;
+let lastCredit = null, lastDebit = null;
+let updateScheduled = false;
 
 const updateBalances = () => {
     const totalCreditEl = document.querySelector('[data-tooltip="Total Credit"]'),
         totalDebitEl = document.querySelector('[data-tooltip="Total Debit"]');
+
     if (!totalCreditEl || !totalDebitEl) return;
-    const parseAmount = (el) => Number(el.textContent.replace('د.ك', '')) || 0,
+
+    const parseAmount = (el) => Number(el.textContent.replace('د.ك', '').trim()) || 0,
         debit = parseAmount(totalDebitEl),
         credit = parseAmount(totalCreditEl);
 
     [totalCreditEl, totalDebitEl].forEach(el => el.querySelectorAll('#balance-span, hr').forEach(e => e.remove()));
 
-    const targetEl = debit > credit ? totalDebitEl : credit > debit ? totalCreditEl : null;
-    if (targetEl) targetEl.insertAdjacentHTML('beforeend', `<hr style="margin:10px 0;opacity:1;">
-        <span id="balance-span">د.ك ${Math.abs(debit - credit).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 })}</span>`);
+    if (lastCredit == credit && lastDebit == debit) return;
+
+    lastCredit = credit;
+    lastDebit = debit;
+
+    const targetEl = debit > credit ? totalCreditEl : credit > debit ? totalDebitEl : null;
+    if (targetEl) {
+        targetEl.insertAdjacentHTML('beforeend', `
+            <hr style="margin:10px 0;opacity:1;">
+            <span id="balance-span">د.ك ${Math.abs(debit - credit).toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 })}</span>
+        `);
+    }
 };
 
 const observer = new MutationObserver(() => {
     if (!updateScheduled) {
         updateScheduled = true;
-        requestAnimationFrame(() => (updateBalances(), updateScheduled = false));
+        // requestAnimationFrame(() => {
+            updateBalances();
+            updateScheduled = false;
+        // });
     }
 });
 
