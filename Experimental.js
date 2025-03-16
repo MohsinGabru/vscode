@@ -2,10 +2,16 @@ const mcr_style = Object.assign(document.createElement('style'), {
     innerHTML: `
     #mcr-code-runner {
         position: fixed;
-        top: 40%;
-        left: 50%;
+        top: 10%;
+        left: 0;
+        right: 0;
+        margin: auto;
+        width: fit-content;
+        min-width: 350px;
+        max-width: 90%;
+        max-height: 80%;
 		z-index: 999;
-        transform: scale(1.01) translate(-50%, -50%);
+        transform: scale(1.01);
         padding: 15px;
         background-color: var(--body-bg);
         box-shadow: 0 0 20px var(--body-color);
@@ -13,7 +19,6 @@ const mcr_style = Object.assign(document.createElement('style'), {
         display: flex;
         flex-direction: column;
         align-items: center;
-        min-width: 300px;
         user-select: none;
 		animation: scaleIn 0.3s ease-out forwards;
     }
@@ -26,12 +31,13 @@ const mcr_style = Object.assign(document.createElement('style'), {
     .closing {
         animation: scaleOut 0.3s ease-out forwards !important;
     }
-    #date-picker {
+    #mcr-date-picker {
         display: none;
         margin-top: 10px;
-        width: 60%;
+        width: auto;
         padding: 5px;
-        padding-right: 0;
+        padding-right: 15px;
+        border-radius: 10px;
     }
     #mcr-code-runner h1 {
         margin: 0;
@@ -39,8 +45,15 @@ const mcr_style = Object.assign(document.createElement('style'), {
 		color: var(--body-color);
 		font-size: 1.5em;
     }
-	#mcr-code-runner h1 textarea {
+	#mcr-code-runner textarea {
 		resize: both;
+        padding: 15px;
+        min-width: fit-content;
+        min-height: fit-content;
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 15px;
+        border-bottom-right-radius: 0;
 	}
 	#mcr-code-runner label {
         font-weight: bold;
@@ -85,13 +98,13 @@ const closePopup = () => {
 
 container.insertAdjacentHTML('afterbegin', `
     <h1>MyFatoorah Code Runner</h1>
-    <textarea rows="4" cols="50" placeholder="Enter code here..."></textarea>
+    <textarea rows="7" cols="60" placeholder="Enter code here..."></textarea>
     <br>
-    <div id="change-date-container">
+    <div id="change-date-container" style="gap: 5px">
         <input type="checkbox" id="change-date">
         <label for="changeDate"> Change Date</label>
     </div>
-    <select id="date-picker"></select>
+    <select id="mcr-date-picker"></select>
     <br>
 `);
 
@@ -116,15 +129,15 @@ for (let i = 0; i < 10; i++) {
     option.value = i * -1;
     option.textContent = formatDate(date);
 
-    document.getElementById('date-picker').appendChild(option);
+    document.getElementById('mcr-date-picker').appendChild(option);
 }
 
 document.getElementById('change-date').addEventListener("change", function () {
     if (this.checked) {
-        document.getElementById('date-picker').style.display = 'block';
+        document.getElementById('mcr-date-picker').style.display = 'block';
         document.querySelector('#change-date-container label').style.color = 'red'
     } else {
-        document.getElementById('date-picker').removeAttribute('style');
+        document.getElementById('mcr-date-picker').removeAttribute('style');
         document.querySelector('#change-date-container label').removeAttribute('style')
     }
 })
