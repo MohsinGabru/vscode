@@ -1,143 +1,164 @@
-const mcr_style = Object.assign(document.createElement('style'), {
-    innerHTML: `
-    #mcr-code-runner {
-        position: fixed;
-        top: 10%;
-        left: 0;
-        right: 0;
-        margin: auto;
-        width: fit-content;
-        min-width: 350px;
-        max-width: 90%;
-        max-height: 80%;
-		z-index: 999;
-        transform: scale(1.01);
-        padding: 15px;
-        background-color: var(--body-bg);
-        box-shadow: 0 0 20px var(--body-color);
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        user-select: none;
-		animation: scaleIn 0.3s ease-out forwards;
-    }
-    @keyframes scaleIn {
-        from { transform: scale(0) }
-    }
-    @keyframes scaleOut {
-        to { transform: scale(0) }
-    }
-    .closing {
-        animation: scaleOut 0.3s ease-out forwards !important;
-    }
-    #mcr-date-picker {
-        display: none;
-        margin-top: 10px;
-        width: auto;
-        padding: 5px;
-        padding-right: 15px;
-        border-radius: 10px;
-    }
-    #mcr-code-runner h1 {
-        margin: 0;
-		margin-bottom: 15px;
-		color: var(--body-color);
-		font-size: 1.5em;
-    }
-	#mcr-code-runner textarea {
-		resize: both;
-        padding: 15px;
-        min-width: fit-content;
-        min-height: fit-content;
-        max-width: 100%;
-        max-height: 100%;
-        border-radius: 15px;
-        border-bottom-right-radius: 0;
-	}
-	#mcr-code-runner label {
-        font-weight: bold;
-	}
-	#mcr-button,
-    #change-date-container {
-		display: flex;
-		gap: 15px;
-	}
-    #mcr-button button {
-        padding: 8px 12px;
-        cursor: pointer;
-        border: none;
-        background-color: #6b3e66;
-        color: #fff;
-        border-radius: 4px;
-        font-weight: bold;
-        font-size: 1.1em;
-    }
-	#mcr-close {
-		background-color: RGBA(184, 50, 50, var(--bg-opacity, 1)) !important;
-    }
-	#mcr-run:focus,
-	#mcr-close:focus {
-		box-shadow: 1px 1px 5px var(--body-color);
-	}
-    `.replace(/\s+/g, ' ')
-});
-
-document.head.appendChild(mcr_style)
+const styleZ = document.createElement("style");
+styleZ.textContent = `
+        #dsa-container {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+	    	z-index: 999;
+            transform: scale(1.01) translate(-50%, -50%);
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 300px;
+            box-shadow: 0 0 10px #000;
+            user-select: none;
+	    	animation: scaleIn 0.5s ease-out forwards;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0) }
+        }
+        @keyframes scaleOut {
+            to { transform: scale(0); transform-origin: bottom }
+        }
+        .closing {
+            animation: scaleOut 0.5s ease-out forwards !important;
+        }
+        #dsa-container h1 {
+            margin: 0;
+        }
+        #dsa-close {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 16px;
+            color: red;
+            font-weight: bold;
+        }
+        #dsa-textarea {
+            width: 100%;
+            height: 100px;
+        }
+        #dsa-textarea,
+        #dsa-custom_data {
+            margin: 10px 0;
+	    	border: 1px solid #000;
+	    	padding: 5px 10px;
+	    	font-size: 1.5em;
+            border-radius: 10px;
+            resize: none;
+        }
+        #dsa-submit {
+            padding: 8px 12px;
+            cursor: pointer;
+            border: none;
+            background: #f65628;
+            color: #fff;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        `;
+document.head.appendChild(styleZ);
 
 const closePopup = () => {
     container.classList.add('closing');
     container.addEventListener('animationend', () => {
         container.remove();
-        mcr_style.remove()
+        styleZ.remove()
     })
 },
-    container = Object.assign(document.createElement('div'), { id: 'mcr-code-runner' }),
-    button = Object.assign(document.createElement('div'), { id: 'mcr-button' }),
-    cancel = Object.assign(document.createElement('button'), { id: 'mcr-close', innerText: 'Cancel', onclick: closePopup });
+    container = Object.assign(document.createElement('div'), { id: 'dsa-container' }),
+    textarea = Object.assign(document.createElement('textarea'), { id: 'dsa-textarea' });
 
-container.insertAdjacentHTML('afterbegin', `
-    <h1>MyFatoorah Code Runner</h1>
-    <textarea rows="7" cols="60" placeholder="Enter code here..."></textarea>
-    <br>
-    <div id="change-date-container" style="gap: 5px">
-        <input type="checkbox" id="change-date">
-        <label for="changeDate"> Change Date</label>
-    </div>
-    <select id="mcr-date-picker"></select>
-    <br>
-`);
+container.insertAdjacentHTML('afterbegin', '<h1>Delivery Status Automation</h1>');
+container.appendChild(Object.assign(document.createElement('button'), {
+    id: 'dsa-close', innerText: 'X', onclick: closePopup
+}));
+container.appendChild(textarea);
+container.appendChild(Object.assign(document.createElement('button'), {
+    innerText: 'Submit', id: 'dsa-submit',
+    onclick: async () => {
+        let data = document.getElementById('dsa-select').value,
+            comment = textarea.value.replace(/\s+/g, ' ').trim();
+        if (comment) comment = comment.charAt(0).toUpperCase() + comment.slice(1);
 
-button.insertAdjacentHTML('beforeend', `<button id="mcr-run" onclick="">Run</button>`);
+        if (document.getElementById('dsa-select').value == 'custom') {
+            if (custom_data.value.replace(/\s+/g, ' ').trim() == '') {
+                custom_data.focus()
+                return
+            } else {
+                data = custom_data.value.replace(/\n+/, ' ')
+            }
+        }
+        console.log(data)
+        closePopup();
+        return;
+        for (const row of document.querySelector('#listReportMainContainer .wtHolder').querySelectorAll('tr[elname="zc-reportRowEl"]')) {
+            row.querySelector('td.zcReport_CustomAction a').click();
 
-button.appendChild(cancel);
-container.appendChild(button);
-document.body.appendChild(container)
+            const preloader = document.getElementById('preloader');
 
-cancel.focus();
+            await waitForCondition(() => {
+                return preloader && window.getComputedStyle(preloader).display === 'none'
+            });
+            await waitNext('[name="New_Delivery_Status"]');
+            await waitForCondition(() => {
+                const formoverlay = document.getElementById('form-overlay');
+                return formoverlay && window.getComputedStyle(formoverlay).display === 'none'
+            });
 
-function formatDate(date) {
-    const dateFull = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', weekday: 'long' }).replace(',', '').replaceAll(' ', '-').replace('-', ':').split(':');
-    return `${dateFull[1]} (${dateFull[0]})`
-}
+            const input = await waitNext('[name="zc-sel2-foc-Delivery_Status"]');
+            // input.value = 'deli';
+            input.value = data;
 
-for (let i = 0; i < 10; i++) {
-    let date = new Date();
-    date.setDate(date.getDate() - i);
+            input.dispatchEvent(inputEvent);
 
-    let option = document.createElement("option");
-    option.value = i * -1;
-    option.textContent = formatDate(date);
+            if (comment) document.getElementById('zc-Comment').value = comment;
 
-    document.getElementById('mcr-date-picker').appendChild(option);
-}
+            await waitNext('li.select2-highlighted');
 
-document.getElementById('change-date').addEventListener("change", function () {
-    if (this.checked) {
-        document.getElementById('mcr-date-picker').style.display = 'block';
-        document.querySelector('#change-date-container label').style.color = 'red'
-    } else {
-        document.getElementById('mcr-date-picker').removeAttribute('style');
-        document.querySelector('#change-date-container label').removeAttribute('style')
+            [...document.querySelectorAll('[name="zc-sel2-inp-Delivery_Status"]')].pop().dispatchEvent(enterEvent);
+
+            document.querySelector('input[name="submit"]').click();
+
+            await waitNext('i#zc-toast-msg');
+
+            await waitForCondition(() => {
+                return preloader && window.getComputedStyle(preloader).display === 'none'
+            })
+        }
     }
-})
+}));
+
+const select = document.createElement('select');
+select.id = 'dsa-select';
+
+const optionsHtml = (() => {
+    try {
+        return Array.from(document.querySelector('ul[fieldlabelname="Delivery_Status"]').querySelectorAll('li'))
+            .map(li => `<option value="${li.textContent.trim()}">${li.textContent.trim()}</option>`).join('')
+    } catch { return '' }
+})();
+
+select.innerHTML = optionsHtml + '<option value="custom">Custom Input</option>';
+container.appendChild(select);
+
+const custom_data = document.createElement('textarea');
+custom_data.style.cssText = `display: ${optionsHtml == '' ? 'block' : 'none'}; width: 50%`;
+custom_data.rows = 2;
+custom_data.id = 'dsa-custom_data';
+container.appendChild(custom_data);
+
+select.addEventListener('change', function () {
+    custom_data.style.display = this.value === 'custom' ? 'block' : 'none';
+});
+
+document.body.appendChild(container);
+textarea.focus()
