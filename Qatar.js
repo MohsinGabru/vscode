@@ -20,10 +20,7 @@ async function click() {
 
     document.querySelector('[data-auto-gen-binding-key="track_inventory"]').click();
 
-
     await wait('[data-auto-gen-binding-key="inventory_account_id"]');
-
-
 
     document.querySelectorAll('.modal-content [class*="text-dashed-underline"]').forEach(el => {
         if (el.textContent.trim() === 'Inventory Account') {
@@ -31,9 +28,7 @@ async function click() {
         }
     });
 
-    document.querySelector('[title="Inventory Asset"]').click()
-
-
+    document.querySelector('[title="Inventory Asset"]').click();
 
     document.querySelectorAll('.modal-content [class*="text-dashed-underline"]').forEach(el => {
         if (el.textContent.trim() === 'Inventory Valuation Method') {
@@ -42,7 +37,4 @@ async function click() {
     });
 
     document.querySelector('[title="FIFO (First In First Out)"]').click()
-
 }
-
-click()
