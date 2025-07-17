@@ -1,138 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Date Difference Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-            margin: 0;
-        }
+let items = [],
+    data = `
+        Ahmed Mahmoud #129164 - 6.3 KD / Sajid Hayat #129165 - 262.84 KD / Eman Alsudairawi #129167 - 377.6 KD / Abbas Kanjeta #129174 - 51.7 KD / Aston Martin Service Center Al Rai #129179 - 31.7 KD / Jijo George #129178 - 4.8 KD / Fahad Ahmad Al Muhammad #129182 - 308.8 KD / Kawther Alrayes #129185 - 5.55 KD / Rajaa Alsarawi #129190 - 48.7 KD / Abdulrahman Saleh #129191 - 38.3 KD / Sheena Joseph #129183 - 216.8 KD / Sheena Joseph Sheena Joseph #129184 - 6.3 KD / Aisha Almershed #129195 - 114.7 KD / Mijbel Alnajjar #129193 - 28.7 KD / Ibrahim Almehjan #129197 - 7.3 KD / Yana Dvornichenko #129198 - 160.7 KD / Abdulrahman Alghemlas #129204 - 39.7 KD / Robert Gurney #129206 - 12.7 KD / Promax General Trading Co. #129211 - 47.8 KD / Tamer Badran #129208 - 47.8 KD / Heidi K. #129210 - 47.7 KD / Esraa Alsaibae #129139 - 13.7 KD / Sabbir Hossain #129163 - 23.7 KD / Hashem Alkout #129142 - 38.3 KD / Hussain Mazaher #129128 - 317.8 KD / Hussain Mazaher #129217 - 155.8 KD / Eman Aldehani #129229 - 11.2 KD / Org Luxury #128963 - 42.9 KD / Athari Ali #129232 - 48.7 KD / Ramu Phone #12854 - 334.8 KD / K Bhavani Prasad #129235 - 345.7 KD / Hashem Ghosheh #129234 - 60.7 KD / Khaled Almahmoud #129236 - 47.7 KD / Bloom Mart #129237 - 304.8 KD / Hamad Alrushoud #129239 - 878.8 KD / Ibrahim Al-Shammari #129240 - 15.3 KD / Ahmad Almajed #129242 - 104.7 KD / Mohammed Abdulqader #129246 - 57.85 KD / Mahmoud Abdullah #129249 - 60.7 KD / Khaled Abdullah #129250 - 16.05 KD / Anwar Draz - -170.9 KD / Farida Aujan - -70.9 KD / Moath Alhamad #129162 () - 220.7 KD / Bu Ahmad Bu Ahmad #129171 () - 17.45 KD / Asmaa Ali #129180 () - 8.8 KD / Fahad Al Shatti #129203 () - 55.8 KD / Jasim Albenali #129216 () - 133.8 KD / Zahraa Zahraa #129215 () - 4.3 KD / Ahmed Altimimi () - -7 KD / Rashed Alammar #129230 () - 107.9 KD / Dr Ghadeer Alfarhoud #129244 () - 267.8 KD / Latifa Al-Hajeri #129248 () - 6.55 KD
+    `;
+data.split('/').map(part => {
+    if (part.includes('(')) {
+        part = part.slice(part.indexOf('#') + 1).replace(' KD', '').trim().split(' () - ');
+        items.push(part)
+    }
+})
+let orders = [];
+for (let i = 0; i < items.length; i++) {
+    orders.push(items[i][0])
+}
 
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            width: 300px;
-        }
+// console.log(orders);
 
-        label {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-            color: #333;
-        }
 
-        textarea {
-            width: 100%;
-            height: 60px;
-            padding: 8px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            resize: none;
-        }
+// processInvoices(orders,orders.length);
 
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 10px 0;
-        }
+/* Another Part */
 
-        input[type="date"] {
-            padding: 10px;
-            font-size: 14px;
-            border: 2px solid #007bff;
-            border-radius: 5px;
-            outline: none;
-            cursor: pointer;
-            display: none;
-            transition: all 0.3s ease-in-out;
-            width: 100%;
-        }
+let available = [];
+let availablePrice = [];
 
-        /* Hide the clear (X) button in Chrome & Edge */
-        input[type="date"]::-webkit-clear-button,
-        input[type="date"]::-webkit-inner-spin-button {
-            display: none;
-        }
+document.querySelectorAll('[name="invoice_origin"]').forEach(val=>{
+    available.push(val.textContent.replace('#',''));
+    availablePrice.push(val.parentElement.querySelector('[name="amount_residual_signed"]').textContent.replace('د.ك','')*1)
+})
 
-        input[type="date"]:hover,
-        input[type="date"]:focus {
-            border-color: #0056b3;
-            box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
-        }
+// const final = items.filter(item => available.includes(item[0]));
 
-        button {
-            margin-top: 15px;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #007bff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
+const final = items.reduce((acc, [key, value]) => {
+  if (available.includes(key)) {
+    if (availablePrice.includes(value*1+.2)) {
+        acc['#'+key] = value*1;
+    }
+  }
+  return acc;
+}, {});
 
-        button:hover {
-            background-color: #0056b3;
-        }
+const textOutput = Object.entries(final).map(([key, value]) => `'${key}': ${value}`).join(', ');
 
-        #result {
-            margin-top: 15px;
-            font-size: 16px;
-            color: #333;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
+document.querySelectorAll('button[aria-label=Remove]').forEach(x=>{
+    x.click()
+})
 
-    <div class="container">
-        <label for="textarea">Enter Text:</label>
-        <textarea id="textarea" placeholder="Write something..."></textarea>
+// eval(`processFat({${textOutput}})`);
 
-        <div class="checkbox-container">
-            <input type="checkbox" id="toggleDate" onchange="toggleDatePicker()">
-            <label for="toggleDate">Change Date</label>
-        </div>
+const end = data.split('/').map(s => {
+  let [, id, val] = s.match(/#(\d+).*?-\s*([\d.]+)/) || [];
+  return final[id] == val ? s.replace(' ()', '') : s;
+});
 
-        <input type="date" id="datepicker">
-        <button onclick="calculateDifference()">Submit</button>
-        <div id="result"></div>
-    </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("datepicker").value = new Date().toISOString().split('T')[0];
-        });
-
-        function toggleDatePicker() {
-            const datepicker = document.getElementById("datepicker");
-            datepicker.style.display = document.getElementById("toggleDate").checked ? "block" : "none";
-        }
-
-        function calculateDifference() {
-            const selectedDate = new Date(document.getElementById("datepicker").value);
-            const currentDate = new Date();
-
-            document.getElementById("result").innerHTML = `
-            Selected Date: ${selectedDate.toISOString().split('T')[0]} <br>
-            Today Date: ${currentDate.toISOString().split('T')[0]} <br>
-            Difference: ${Math.floor((selectedDate - currentDate) / (1000 * 60 * 60 * 24)) + 1} days`;
-        }
-    </script>
-
-</body>
-</html>
+console.log(end);
